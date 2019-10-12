@@ -33,4 +33,23 @@ public class CartService {
     public static List<Sku> getCartSkuList(){
         return cartSkuList;
     }
+
+    /**
+     * Version1.0.0
+     * 找出购物车中所有电子类商品
+     * @param cartSkuList
+     * @return
+     */
+    public List<Sku> filterElectronicsSkus(List<Sku> cartSkuList){
+        List<Sku> electronicSkus = new ArrayList<Sku>();
+
+        for(Sku cartSku : cartSkuList){
+            //如果商品类型 等于 电子类
+            if(cartSku.getSkuCategory().equals(SkuCategoryEnum.ELECTRONICS)){
+                electronicSkus.add(cartSku);
+            }
+        }
+
+        return electronicSkus;
+    }
 }

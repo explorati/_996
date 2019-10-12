@@ -52,4 +52,25 @@ public class CartService {
 
         return electronicSkus;
     }
+
+    /**
+     * Version2.0.0
+     * 根据传入的商品类型参数，找出购物车中同种商品类型的商品列表
+     * @param cartSkuList
+     * @param skuCategoryEnum
+     * @return
+     */
+    public static List<Sku> filterSkusByCategory(List<Sku> cartSkuList, SkuCategoryEnum skuCategoryEnum){
+        List<Sku> result = new ArrayList<Sku>();
+
+        for(Sku cartSku : cartSkuList){
+            //如果 商品类型 等于 传入的商品类型参数
+            if(skuCategoryEnum.equals(cartSku.getSkuCategory())){
+                result.add(cartSku);
+            }
+        }
+
+        return result;
+    }
+
 }

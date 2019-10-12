@@ -40,7 +40,7 @@ public class CartService {
      * @param cartSkuList
      * @return
      */
-    public List<Sku> filterElectronicsSkus(List<Sku> cartSkuList){
+    public static List<Sku> filterElectronicSkus(List<Sku> cartSkuList){
         List<Sku> electronicSkus = new ArrayList<Sku>();
 
         for(Sku cartSku : cartSkuList){

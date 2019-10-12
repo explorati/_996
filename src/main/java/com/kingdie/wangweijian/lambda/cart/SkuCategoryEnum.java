@@ -26,4 +26,25 @@ public enum SkuCategoryEnum {
         this.name = name;
     }
 
+    /**
+     * 根据传入state信息返回相应的enum
+     * @param state
+     * @return
+     */
+    public static SkuCategoryEnum stateOf(int state){
+        for(SkuCategoryEnum skuCategoryEnum : values()){
+            if(skuCategoryEnum.getCode() == state){
+                return skuCategoryEnum;
+            }
+        }
+        return null;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

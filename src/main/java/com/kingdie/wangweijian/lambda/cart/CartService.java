@@ -73,4 +73,30 @@ public class CartService {
         return result;
     }
 
+    /**
+     * Version3.0.0
+     * 支持通过商品类型或总价来过滤商品
+     * @param cartSkuList
+     * @param category
+     * @param totalPrice
+     * @param categoryOrPrice - true：根据传入的商品类型过滤， false：根据总价来过滤
+     * @return
+     */
+    public static List<Sku> filterSkus(List<Sku> cartSkuList, SkuCategoryEnum category, Double totalPrice, Boolean categoryOrPrice){
+        List<Sku> result = new ArrayList<Sku>();
+
+        for(Sku cartSku : cartSkuList){
+            //如果根据商品类型判断，sku类型与输入类型比较
+            //如果根据商品呢总价判断，sku类型与输入总价比较
+            if(
+                    (categoryOrPrice && category.equals(cartSku.getSkuCategory()))
+                ||
+                    (!categoryOrPrice && totalPrice < cartSku.getTotalPrice())
+            ){
+                result.add(cartSku);
+            }
+        }
+
+        return result;
+    }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @ Author : Weijian_Wang
  * @ Date : Created in 16:11 2019/10/14 0014
- * @ Description ：流的各种操作
+ * @ Description ：流操作之中间操作
  */
 public class StreamOperator {
 

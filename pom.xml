@@ -32,7 +32,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.58</version>
         </dependency>
-        <!-- Guava-->
+        <!-- Google Guava-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

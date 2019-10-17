@@ -1,0 +1,43 @@
+1.垃圾回收(GC)的特点
+	1.垃圾回收机制只负责回收堆内存资源，不会回收任何 物理资源
+	2.程序无法 精确控制 垃圾回收动作的具体发生时间
+	3.在垃圾回收之前，总会先调用它的 finalize 方法
+
+2.常见需手动释放的物理资源
+	1.文件/流资源
+	2.套接字资源(Socket)
+	3.数据库连接资源
+
+3.物理资源不手动释放的后果：
+	1.资源被较长时间无效占用
+	2.超过最大限制后，将无资源可用
+	3.导致系统无法正常运行
+
+4.实战案例：文件拷贝(初始版)
+	目的：Java7之前，实现利用基础IO流完成文件拷贝功能
+5.实战案例：文件拷贝(升级版)
+	目的：Java7之后，实现利用基础IO流完成文件拷贝功能
+
+6.try - with - resource (TWR)简介
+	1.Java7引入的新特性
+	2.优雅关闭资源
+	3.一种Java语法糖
+
+7.源码解析：查看编译后源码，分析内部原理 (IDEA自带反编译工具)
+
+8.try - with - resource 使用
+	1.多资源自动关闭
+	2.待关闭资源必须 实现AutoCloseable接口 （如FileInputStream继承InputStream类，InputStream实现Closeable接口，Closeable接口继承AutoCloseable)
+	3.避免异常屏蔽(会采用追加的方式将底层异常追加到最外层异常上)
+
+9.资源关闭顺序问题
+	1.先开后关原则
+	2.从外到内原则
+	3.底层资源单独声明原则
+
+10.资源关闭特殊情况
+	1.资源对象被return的情况下，由调用方关闭
+	2.ByteArrayInputStream等 不需要 检查关闭的资源对象
+	3.使用Socket获取的InputStream和OutputStream对象不需要关闭，当Socket关闭时会自动关闭
+		正确的方法是调用Socket的shutdownInput和shutdownOutput方法关闭，它只会关闭基于Socket的输入流，而不会关闭整个Socket连接
+

@@ -1,0 +1,35 @@
+Google Guava工具集简介
+	Guava工程包含了若干被Google的Java项目广泛依赖的核心库，例如：集合、缓存、原生类型支持、并发库、通用注解、字符串处理、I/O等。
+	这些工具每天都在被Google的工程师应用在产品服务中。
+
+使用Guava须引包
+
+1. 使用和避免null
+	 "Null 真糟糕。"  --Doug Lea(concurrent包的创建者)
+   大多数情况下，使用null表明的是某种缺失情况。
+   		Guava引入Optional<T>表明可能为null的T类型引用。Optional实例可能包含非null的引用(引用存在)，也可能什么也不包括(引用缺失)。
+   	正是受到Guava的启发，Java8 将Optional类作为一个新特性引入进Java8 的类库
+
+2. Java8 新特性 Optional
+	of()  ofNullable()  empty() 
+	isPresent()  ifPresent()  orElse()  orElseGet()
+
+3.不可变集合
+	创建对象的 不可变拷贝 是一项很好的防御性编程技巧
+	Guava为所有JDK标准集合类型和Guava新集合类型都提供了简单易用的不可变版本
+
+4.不可变对象的优点
+	1.当对象被不可信的库调用时，不可变形式是安全的
+	2.不可变对象被多个线程调用时，不存在竞态条件问题
+	3.不可变集合不需要考虑变化，因此可以节省时间和空间
+	4.不可变对象因为有固定不变，可以作为常量来安全使用
+
+5.JDK提供的unmodifiableXXX方法
+	1.笨重且累赘
+	2.不安全
+	3.低效
+
+6.不可变集合的是那种创建方式
+	1.copyOf方法：ImmutableSet.copyOf(Set)
+	2.of方法:ImmutableSet.of("a", "b", "c")
+	3.Builder工具：ImmutableSet.builder().build()

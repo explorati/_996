@@ -1,0 +1,44 @@
+常用函数接口及使用
+	java.util.function下可以找到
+		接口				参数		 返回类型	 		描述
+	Predicate<T> 		 T		 boolean	用于判别一个对象，比如求一个人是否为男性
+	Consumer<T>			 T        void	用于接收一个对象进行处理但没有返回，比如接受一个人并打印他的名字  
+	Function<T,R>		 T		   R		转换一个对象为不同类型的对象
+	Supplier<T>		    None	   T		提供一个对象
+	UnaryOperator<T> 	 T		   T		接收对象并返回同类型的对象
+	BinaryOpeartor<T>	(T, T)	   T		接收两个同类型的对象，并返回一个原类型的对象
+	BiFunction<T, U, R> (T,U)	   R		接收T,U两个参数，返回R类型的参数	   
+
+方法引用
+	调用特定方法的Lambda表达式的一种快捷写法，可以让你重复使用现有的方法定义，并像Lambda表达式一样传递他们
+
+	  Sku			::			getSkuPrice
+	目标引用		双冒号分隔符		  方法名
+
+	指向静态方法的方法引用：	
+		//(args) -> ClassName.staticMethod(args);  
+		//ClassName::staticMethod
+		public void test1(){
+			Consumer<String> consumer1 = (String number) -> Integer.parseInt(number);
+
+			Consumer<String> consumer2 = Integer::parseInt;
+		}
+
+	指向任意实例方法的方法引用：
+		//(args) -> ClassName.instanceMethod();
+		//ClassName::instanceMethod
+		public void test2(){
+			Consumer<String> consumer1 = (String str) -> str.length();
+
+			Consumer<String> consumer2 = String::length;
+		}
+
+	指向现有对象的实例方法的方法引用：
+		//(args) -> object.instanceMethod(args)
+		//object::instanceMethod
+		public void test3(){
+			StringBuilder sb = new StringBuilder();
+			Consumer<String> consumer1 = (String str) -> sb.append(str);
+
+			Consumer<String> consumer2 = sb::append;
+		}

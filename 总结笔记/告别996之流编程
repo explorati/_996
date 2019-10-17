@@ -45,10 +45,10 @@
 	 									   查找任意(findAny)	      最小值(min)
 	 									   						  计数(count)
 8.流的构建
-	1.由值创建流
-	2.由数组创建流
-	3.由文件生成流
-	4.由函数生成流(无限流)
+	1.由值创建流  Stream.of(1, 2, 3)
+	2.由数组创建流	Arrays.stream(nums)
+	3.由文件生成流	Files.lines(Paths.get(url))
+	4.由函数生成流(无限流)	Stream.generate()或Stream.iterate()
 
 9.收集器简介
 	1.将流中的元素累积成一个结果
@@ -63,8 +63,8 @@
 	Collector是专门作为colllect方法的参数的，而Collectors是专门作为生产具体Collector的工具类
 
 11.预定义收集器功能
-	1.将流元素规约和汇总为一个值
-	2.将流元素分组
-	3.将流元素分区
+	1.将流元素规约和汇总为一个值  collect(Collectors.toList())
+	2.将流元素分组	collect(Collectors.groupingBy())
+	3.将流元素分区   collect(Collectors.partitioningBy())
 
 

@@ -14,6 +14,11 @@ Google Guava工具集简介
 	of()  ofNullable()  empty() 
 	isPresent()  ifPresent()  orElse()  orElseGet()
 
+	Optional.ofNullable(list)
+		.map(List::stream)
+		.orElseGet(Strea::empty)
+		.forEach(System.out::println)
+
 3.不可变集合
 	创建对象的 不可变拷贝 是一项很好的防御性编程技巧
 	Guava为所有JDK标准集合类型和Guava新集合类型都提供了简单易用的不可变版本
@@ -24,12 +29,59 @@ Google Guava工具集简介
 	3.不可变集合不需要考虑变化，因此可以节省时间和空间
 	4.不可变对象因为有固定不变，可以作为常量来安全使用
 
-5.JDK提供的unmodifiableXXX方法
+5.JDK提供的unmodifiableXXX方法(Collections.unmodifiable())
 	1.笨重且累赘
 	2.不安全
 	3.低效
 
-6.不可变集合的是那种创建方式
+6.不可变集合的三种创建方式
 	1.copyOf方法：ImmutableSet.copyOf(Set)
 	2.of方法:ImmutableSet.of("a", "b", "c")
 	3.Builder工具：ImmutableSet.builder().build()
+
+7.新集合类型
+    Guava中引入了很多JDK没有的、但明显有用的新集合类型。这些新类型是为了和JDK集合框架共存，而没有往JDK集合抽象中硬塞其他概念。
+
+8.Multiset
+    Set：无序、元素不能重复的集合
+    List：有序、元素能重复的集合
+    Multiset结合两者，无序，元素可重复的集合
+
+    Multiset两种视角
+        一、没有元素顺序限制的ArrayList<E>
+            add(E):添加单个元素
+            iterator():返回一个迭代器，包含Multiset所有元素(包含重复)
+            size()：返回所有元素的总个数(包含重复元素)
+        二、Map<E, Integer> ，键为元素，值为计数
+            count(Object)：返回给定元素的计数
+            entrySet()：返回Set<Multiset.Entry<E>>,和Map的entrySet类似
+            elementSet()：返回所有不重复元素的Set<E>，和Map的keySet类似
+    Multiset和Map的区别
+        1.元素计数只能是正数
+        2.multiset.size()返回集合大小
+        3.multiset.iterator()会迭代重复元素
+        4.multiset支持直接设置元素的计数
+        5.没有的元素，multiset.count(E)为0
+    多种Multiset的实现
+        1.HashMultiset
+        2.TreeMultiset
+        3.LinkedHashMultiset
+        4.ConcurrentHashMultiset
+        5.ImmutableMultiset
+
+9.实战案例：Multiset使用(使用Multiset集合类，实现统计一篇文章中文字出现次数功能)
+
+10.集合工具类
+	Guava为集合类型提供了许多工具方法，这也是Guava最流行和成熟的部分之一。
+	常见的集合工具类如：Lists，Sets，Maps等。
+
+	Sets工具类的常用方法
+    并集 / 交集 / 差集 / 分解集合中的所有子集 / 求两个集合的笛卡尔积
+    Sets.union()  Sets.intersection()  Sets.difference()
+    Sets.powerSet() Sets.cartesianProduct()
+
+    Lists工具类的常用方式
+    反转 / 拆分
+    Lists.reverse()  Lists.partition()
+记得看一下Lists.reverse()源码，作为参考
+

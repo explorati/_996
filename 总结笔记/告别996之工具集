@@ -16,7 +16,7 @@ Google Guava工具集简介
 
 	Optional.ofNullable(list)
 		.map(List::stream)
-		.orElseGet(Strea::empty)
+		.orElseGet(Stream::empty)
 		.forEach(System.out::println)
 
 3.不可变集合
@@ -24,10 +24,10 @@ Google Guava工具集简介
 	Guava为所有JDK标准集合类型和Guava新集合类型都提供了简单易用的不可变版本
 
 4.不可变对象的优点
-	1.当对象被不可信的库调用时，不可变形式是安全的
-	2.不可变对象被多个线程调用时，不存在竞态条件问题
-	3.不可变集合不需要考虑变化，因此可以节省时间和空间
-	4.不可变对象因为有固定不变，可以作为常量来安全使用
+	1.当对象被不可信的库调用时，     不可变形式是安全的
+	2.不可变对象被多个线程调用时，   不存在竞态条件问题
+	3.不可变集合不需要考虑变化，因此  可以节省时间和空间
+	4.不可变对象因为有固定不变，      可以作为常量来安全使用
 
 5.JDK提供的unmodifiableXXX方法(Collections.unmodifiable())
 	1.笨重且累赘
@@ -84,4 +84,14 @@ Google Guava工具集简介
     反转 / 拆分
     Lists.reverse()  Lists.partition()
 记得看一下Lists.reverse()源码，作为参考
+
+11.Guava对字节流/字符流提供的工具方法
+    ByteStreams：提供对InputStream/OutputStream的操作
+    CharStreams：提供对Reader/Writer的操作
+
+   对源(Source)与汇(Sink)的抽象
+    源是可读的：ByteSource/CharSource
+    汇是可写的：ByteSink / CharSink
+
+    Files.asCharSource()   Files.asCharSink()
 

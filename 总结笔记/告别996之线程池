@@ -1,0 +1,114 @@
+线程池简介
+1.什么是线程池？
+	线程池顾名思义就是事先创建若干个可执行的线程放入一个池(容器)中，需要的时候从池中获取线程不用自行创建，使用完毕不需要销毁线程而是放回池中，从而减少创建和销毁线程对象的开销。
+2.线程池的好处
+	1.降低资源消耗
+	2.提高响应速度
+	3.提高线程的可管理性
+面试题：简单线程池设计
+	面试官：同学你好，您能独立设计出一个简单线程池吗？
+	  最初的线程池：
+		首先，得有一个池(容器)对象(功能：开启/初始化/关闭)，给出池容量(可以设默认值)，获取线程(当池中没有线程怎么办)，归还线程，假如很多线程同时请求，需要一个队列存储请求顺序，返回执行结果
+	  改进：
+	  	1.池对象(存储线程)，外界只需要提交任务，池子用线程帮助执行，然后返回结果(异步)
+	  	2.任务队列(外界提交任务之后，存到这里)
+	  	3.执行器(队列里取任务，池子中取线程，用线程执行任务，执行完之后将线程还回池子中，将结果异步返回)
+	   问题：
+	   	1.线程池初始化时创建多少线程？
+	   	2.整个任务队列创建多长？
+	   	3.任务队列满了怎么办？、
+
+3.线程池的核心参数
+	/**
+	  * 线程池核心参数
+	  * corePoolSize  		核心线程数
+	  * maximumPoolSize 	最大线程数
+	  * keepAliveTime   	线程空闲后的存活时间
+	  * unit 				时间单位
+	  * workQueue			用于存放任务的阻塞队列
+	  * threadFactory 		线程工厂类
+	  * handler				当队列和最大线程池都满了之后的饱和策略
+	  */
+	public ThreadPoolExecutor(int corePoolSize,
+							  int maximumPoolSize,
+							  long keepAliveTime,
+							  TimeUnit unit,
+							  BlockingQueue<Runnable> workQueue,
+							  ThreadFactory threadFactory,
+							  RejectedExecutionHander handler){}
+
+4.线程池的处理流程
+	使用方 -> 提交任务
+	线程池 -> 核心线程池是否已满 -是-> 阻塞队列是否已满 -是-> 线程池是否已满 -是-> 按照饱和策略处理多余线程
+					|						|					|
+					否						否					否
+					|						|					|
+			  创建新线程执行任务 		将新任务存储在阻塞队列  创建新线程执行任务
+
+
+5.线程池可选择的阻塞队列
+	阻塞队列：一个支持两个附加操作的队列，这两个附加操作是阻塞的插入和移除的方法
+	阻塞的插入：当队列满时，队列会阻塞插入元素的线程，直到队列不满
+	阻塞的移除：当队列空时，获取元素的线程会等待队列变为非空
+	BlockingQueue 
+		1.无界队列	LinkedBlockingQueue
+		2.有界队列  ArrayBlokcingQueue / LinkedBlockingQueue
+		3.同步移交队列(SynchronousQueue)：队列是不存储元素的阻塞队列，每个插入操作必须等到另一个线程去调用移除操作才能成功，否则插入的操作一直处于阻塞状态
+
+6.线程池可选择的饱和策略
+	1.AbortPolicy				终止策略(默认)
+	2.DiscardPolicy 			抛弃策略
+	3.DiscardOldestPolicy 		抛弃旧任务策略
+	4.CallerRunsPolicy 			调用者运行策略
+
+7.线程池的执行示意图
+	主线程 -> execute()方法 -> 
+	(1)如果 corePoolSize(核心线程数量)没满，则立即创建一个线程执行任务
+	(2)如果corePoolSize满了,则将任务放到BlockingQueue(阻塞队列)中
+	(3)如果corePoolSize和BlockingQueue都满了，但是没达到maximumPoolSize，创建新线程执行任务
+	(4)如果corePoolSize，BlockingQueue，maximumPoolSize都满了，则调用饱和策略，根据创建线程池时的不同的饱和策略执行处理   																						如果传入的是调用方自行执行的饱和策略，就会返回到主线程，通过主线程去运行任务的run方法来执行任务
+
+8.常用线程池:
+	newCachedThreadPool、newFixedThreadPool、newSingleThreadPool
+	/**
+	 *线程数量无限线程池
+	 */
+	 public static ExecutorService newCachedThreadPool() {
+	 	return new ThreadPoolService(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+	 }
+	 解读：核心线程数是0， 最大线程数是Integer.MAX_VALUE(亿级别)，阻塞队列是同步移交的，有一个任务就有一个线程去消费才能接受另一个任务，最大的线程个数又是无限大，所以可以创建许多的线程
+	 使用时可以创建无限个线程
+
+	 /**
+	  *线程数量固定的线程池
+	  * nThreads 核心线程数
+	  */
+	  public static ExecutorService newFixedThreadPool(int nThreads) {
+	  	return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnitsMILLISECONDS, new LinkedBlockingQueue<Runnable>());
+	  }
+	  解读：核心线程数固定，最大线程数等于核心线程数，也是固定的，阻塞队列是一个无界的，所以可以提交无限多的任务，但是只会开辟出固定的线程数
+	  虽然线程个数固定，但是可以提交无限个任务，队列也会把系统内存撑爆
+
+	  /**
+	   *单一线程线程池
+	   */
+	   public static ExecutorService newSingleThreadPool() {
+	   	return new Executors.FinalizableDelegateExecutorService(new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));
+	   }
+	   解读：核心线程数为1，最大线程数为1，阻塞队列是无界的
+
+9.创建线程池的两种方式：
+	submit()  Callable接口中的call()方法是throws Exception的(具体可看源码)
+	execute()  Runnable接口需自己抛异常
+
+10.线程池的状态
+	RUNNING SHUTDOWN   STOP  TIDYING TERMINATED
+
+	RUNNING -> SHUTDOWN shutdown()方法 队列中的任务执行完毕，不再接受新任务
+	RUNNING -> STOP     shutdownNow()方法 中断正在执行的任务，丢弃队列中的任务，不再接受新任务
+	SHUTDOWN -> TIDYING 线程池中执行的任务为空 队列为空
+	STOP -> TIDYING  线程池中执行的任务为空
+	TIDYING -> TERMINATED terminated()方法执行完毕
+
+
+

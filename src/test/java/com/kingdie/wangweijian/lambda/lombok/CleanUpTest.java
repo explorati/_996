@@ -1,6 +1,7 @@
 package com.kingdie.wangweijian.lambda.lombok;
 
 import lombok.Cleanup;
+import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,6 +15,7 @@ import java.io.IOException;
  */
 public class CleanUpTest {
 
+    @Test
     public void copyFile(String in, String out) throws IOException {
         @Cleanup FileInputStream fileInputStream = new FileInputStream(in);
         @Cleanup FileOutputStream fileOutputStream = new FileOutputStream(out);

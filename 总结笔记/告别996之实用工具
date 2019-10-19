@@ -21,7 +21,7 @@ Lombok实现原理
 												没有变动 -> 生成字节码 -> .class文件
 
 		插入式注解处理器的功能就是会修改语法树，生成一些额外的代码。
-		经过注解处理器，语法树会有变动，有变动，会回到生成抽象语法树的步骤，将变动后的代码再次生成抽象语法树，接着在通过注解处理器，然后在判断是否有变动，若无变动，则生成字节码
+		经过注解处理器，语法树会有变动，有变动，会回到生成抽象语法树的步骤，将变动后的代码再次生成抽象语法树，接着再通过注解处理器，然后再判断是否有变动，若无变动，则生成字节码
 
 2.Lombok常用注解
 	@Getter
@@ -63,3 +63,105 @@ Lombok实现原理
 
 4.Lombok常用注解使用
 	Lombk注解的使用方式，通过查看编译后.class文件，理解其工作原理
+
+*具体使用可以参考源码中的属性或者方法
+一、	@Getter 即可作用在属性上，也可作用在类上
+	@Getter(
+		AccessLevel.PRAVITE	
+		onMethod_ = { @NotNull}
+	)
+	@Getter(
+			lazy = true
+	)
+
+	lazy：延迟加载
+	AccessLevel：方法级别
+	onMethod：在get方法上加上别的注解，如@NotNull
+
+	lazy注解加上后的.class文件解释为：
+		public String getField1() {
+	        Object value = this.field1.get();
+	        if (value == null) {
+	            AtomicReference var2 = this.field1;
+	            synchronized(this.field1) {
+	                value = this.field1.get();
+	                if (value == null) {
+	                    String actualValue = "explorati";
+	                    value = "explorati" == null ? this.field1 : "explorati";
+	                    this.field1.set(value);
+	                }
+	            }
+	        }
+
+	        return (String)((String)(value == this.field1 ? null : value));
+	    }
+二、@Setter 即可作用在属性上，也可作用在类上
+	@Setter(
+		value = AccessLevel.PRIVATE,
+		onParam_ = { @NotNull}
+	)
+
+	onParam：入参不能为null
+
+三、@ToString 必须作用在类上
+	@ToString( 
+		includeFieldName = false, 
+		exclude = { "field1"}, 
+		of = {"field1"}，
+		doNotUseGetters = false
+	)
+	includeFieldName：是否包含属性名
+	exclude：不包含什么
+	of：强制包含什么
+	doNotUseGetters：是否调用getter方法
+	其中of优先级大于exclude
+
+四、@EqualsAndHashCode 作用在类上
+	源码中属性和方法和@ToString类似
+
+五、@Data注解详解 作用在类上
+	@Data注解，大而全的注解：包含@Getter, @Setter, @ToString, @EqualsAndHashCode
+
+六、@Val注解
+	相当于弱语言中的变量声明，他可以接收任何类型的参数
+	使用如下：
+	public ValTest() {
+        val field = "explorati";
+
+        val list = new ArrayList<>();
+        list.add("explorati");
+    }
+    在编译时，会根据传入类型，适配成不同的类型  如果list中传入不同类型的，泛型为Object
+
+七、@NotNull
+	生成非空校验
+	public NonNullTest(@NonNull String field) {
+        if (field == null) {
+            throw new NullPointerException("field is marked non-null but is null");
+        } else {
+            System.out.println(field);
+        }
+    }
+
+八、构造器	可叠加使用 作用在类上
+  @AllArgsConstructor ： 全参构造函数
+  @NoArgsConstructor  ： 无参构造函数
+  @RequiredArgsConstructor ： 选定的部分参数
+  	@RequiredArgsConstructor的参数为final或者notNull属性
+
+九、@Cleanup注解  	资源关闭
+	 @Cleanup FileInputStream fileInputStream = new FileInputStream(in);
+     @Cleanup FileOutputStream fileOutputStream = new FileOutputStream(out);
+     编译后查看源码和try - with - resource很像
+
+
+5.Lombok优缺点
+ 优点：
+	1.通过注解自动生成样板代码，提高开发效率
+	2.代码简洁，只关注相关属性
+	3.新增属性后，无需刻意修改相关方法
+ 缺点：
+ 	1.降低了源代码的可读性和完整性
+ 	2.加大对问题排查的难度
+ 	3.需要IDE相关插件的支持
+

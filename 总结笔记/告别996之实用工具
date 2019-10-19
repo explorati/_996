@@ -1,0 +1,65 @@
+Lombok简介
+	Project Lombok 是一个java库，可以自动插入编辑器并构建工具，为您的java增添色彩。
+	永远不要再写另一个getter或equeals方法，使用一个注释，您的类具有一个功能齐全的构建器，自动化为您的日志记录变量等等。
+							-----Lombok官网
+	解读：Lombok是一个java库，他为我们提供了一些常用注解，我们将注解配置到相应的类或属性上，他会在源代码编译时期自动生成一些代码，从而达到增强类的功能的目的。
+
+Lombok实现原理
+	注解的两种解析方式
+		1.运行时解析
+			Spring配置的AOP切面都是在程序运行时通过反射来获取这些注解值，缺点：只有在程序运行时才能获取到这些注解值，导致运行时的代码效率很低，并且如果想在编译阶段利用注解进行一些检查，比如说用户的某些不合理的代码，做出错误报告，反射的使用方法就无能为力了
+		2.编译时解析
+			编译时解析的两种机制
+				一、Annotation Processing Tool(注解处理器)：最早时是在jdk1.5时和注解一起引入的，它是一个命令行工具，能够提出构建时基于源代码对程序结构的读取功能，能够通过运行注解处理器来生成新的中间文件，进而影响编译过程。不过，注解处理器在jdk1.8中被移除了，取而代之的是JSR269注解处理器
+				二、Pluggable Annotation Processing API(JSR269插入式注解处理器)：实现了JSR269的机制，作为注解处理器的一种替代方案
+
+	工作原理：
+						假如语法树有变动 -> 回到生成抽象语法树(AST)
+						|									|
+		javac -> 生成抽象语法树(AST) -> 插入式注解处理器 -> 语法树是否变动？ 
+															|
+												没有变动 -> 生成字节码 -> .class文件
+
+		插入式注解处理器的功能就是会修改语法树，生成一些额外的代码。
+		经过注解处理器，语法树会有变动，有变动，会回到生成抽象语法树的步骤，将变动后的代码再次生成抽象语法树，接着在通过注解处理器，然后在判断是否有变动，若无变动，则生成字节码
+
+2.Lombok常用注解
+	@Getter
+	@Setter
+	@ToString
+	@EqualsAndHashCode   ---- @Data  				--- 常见方法
+
+	@AllArgsConstructor (全参构造函数)
+	@RequiredArgsConstructor （必须参数的构造函数)
+	@NoArgsConstructor	(无参构造函数)   				---- 构造方法
+
+	@Slf4j  			--- 自动为类添加日志支持
+	@SneakyThrows		--- 自动生成try/catch捕捉异常
+	@Synchronized		--- 自动生成同步锁(可能是对象的，也可能是属性的)
+	@Building			--- 自动生成构造者模式
+	@Cleanup			--- 自动调用变量的close方法释放资源
+	@NonNull			--- 自动生成空值校验
+
+3.Lombok插件安装
+	为什么要为IDEA来安装这个插件？
+		Lombok是工作在编译时期(原理)，利用了一个注解处理器的功能，将我们自己写的注解解析之后为我们生成一些代码。例如咱们只写了一个属性，加上@Getter注解，咱们并没有真正的对这个属性写getter方法，在idea中是搜索不到get方法的，这样的话，idea肯定就会报错，所以需要在使用Lombok之前先安装对应编辑器的Lombok插件。
+
+	Lombok Plugins
+ 		安装过程问题：如果安装时，显示连接超时错误，在网页上搜索Lombok plugins，IDEA官网会有一个plugin插件，点击get，找到相应IDEA的版本的Lombok，下载，然后回到IDEA中，选择install plugins from disk(从磁盘中安装插件)即可
+
+		Java Bean中的getter setter toString equals hascode等方法自动生成后再添加新属性时不需手动修改，
+		lombok会自动添加 
+*		只需在JavaBean上添加一行注解代码 @Data
+		还需在Maven中引入一个lombok的包
+			依赖：
+				<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+				<dependency>
+				    <groupId>org.projectlombok</groupId>
+				    <artifactId>lombok</artifactId>
+				    <version>1.18.8</version>
+				    <scope>provided</scope>
+				</dependency>
+		其中scope：provided标志着jar包是运行在编译时期，当程序编译成了class源代码之后，这个jar包不会在源代码层面体现
+
+4.Lombok常用注解使用
+	Lombk注解的使用方式，通过查看编译后.class文件，理解其工作原理
